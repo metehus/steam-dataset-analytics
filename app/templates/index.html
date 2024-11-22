@@ -1,0 +1,130 @@
+<!-- dashboard/templates/dashboard/index.html -->
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../static/index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <title>Dashboard de Jogos da Steam</title>
+</head>
+
+<body onload="loadSelectValues()">
+  <div class="upload-container">
+    <h1>Upload do Arquivo CSV</h1>
+
+    <input type="file" id="fileInput" accept=".csv" required>
+    <button onclick="handleFileUpload()">Enviar</button>
+    <h3 id="message-input"></h3>
+  </div>
+
+  <div class="upload-container">
+    <h1>Analise de dados</h1>
+
+    <button class="to-disable-when-no-data" onclick="handleFileUpload()">Treinar</button>
+    <h3 id="message-train"></h3>
+
+    <form>
+      <label>
+        Preço (em USD):
+        <input class="to-disable-when-no-data" type="number">
+      </label>
+      <label>
+        Genero:
+        <select class="to-disable-when-no-data" name="genre" id="genre">
+        </select>
+      </label>
+      <label>
+        Detalhe:
+        <select class="to-disable-when-no-data" name="detail" id="detail">
+        </select>
+      </label>
+
+      <button class="to-disable-when-no-data">Preditar</button>
+    </form>
+  </div>
+
+  <div class="charts-container" style="display: visible;">
+    <img src="../media/genre_popularity.jpg" alt="Gráfico de popularidade dos gêneros de jogos da Steam">
+    <img src="../media/developer_rating_chart.jpg" alt="">
+    <img src="../media/games_reviews.jpg" alt="">
+    <img src="../media/genre_distribution_developer.jpg" alt="">
+    <img src="../media/games_developer.jpg" alt="">
+  </div>
+
+  <script>
+    const messageInputElement = document.querySelector('#message-input')
+    const messageTrainElement = document.querySelector('#message-train')
+    const chartsContainer = document.querySelector('.charts-container')
+    const toDisableWhenNoDataElements = document.querySelectorAll('.to-disable-when-no-data')
+
+    const showCharts = () => chartsContainer.style.display = 'inherit'
+    const hideCharts = () => chartsContainer.style.display = 'none'
+
+    async function handleFileUpload() {
+      hideCharts()
+      messageInputElement.innerText = 'Carregando...'
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      if (file) {
+        try {
+
+          const images = await fetch('/generate_charts/', {
+            method: 'POST',
+            body: formData,
+          }).then(r => r.json())
+
+          showCharts()
+          messageInputElement.innerText = ''
+
+          await loadSelectValues()
+
+          console.log(images)
+        } catch (error) {
+          console.error(error)
+          messageInputElement.innerText = `Ocorreu um erro! ${error}`
+        }
+      } else {
+        alert('Selecione um arquivo .csv valido!');
+      }
+    }
+
+    async function loadSelectValues() {
+      try {
+        const { genres, details } = await fetch('/select_values').then(r => r.json())
+
+        toDisableWhenNoDataElements.forEach(el => { el.disabled = false })
+        messageTrainElement.innerText = ''
+
+        const genresElement = document.querySelector('#genre')
+        const detailsElement = document.querySelector('#detail')
+
+        populateSelectOptions(genresElement, genres)
+        populateSelectOptions(detailsElement, details)
+      } catch (error) {
+        messageTrainElement.innerText = 'Envie um arquivo para treinar'
+        toDisableWhenNoDataElements.forEach(el => { el.disabled = true })
+        return;
+      }
+    }
+
+    function populateSelectOptions(element, values) {
+      for (option of values) {
+        optionElement = document.createElement('option');
+        optionElement.value = option
+        optionElement.innerText = option
+        element.add(optionElement);
+      }
+    }
+
+  </script>
+</body>
+
+</html>

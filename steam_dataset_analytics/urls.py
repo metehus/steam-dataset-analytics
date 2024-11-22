@@ -16,7 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from app import views
+from app.views import get_select_values, index_view, serve_media_file
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('generate_charts/', views.generate_charts),
+    path('media/<str:filename>', serve_media_file),
+    path('select_values', get_select_values),
+    path('', index_view),
 ]
