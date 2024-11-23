@@ -57,6 +57,10 @@ img {
     padding: 1em;
 }
 
+#message-train {
+    color: darkred;
+}
+
 button {
     width: 50%;
     margin: auto;
@@ -66,5 +70,12 @@ button {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+}
+
+button:disabled {
+    
+    background-color: #bddcff;
+    color: rgb(255, 255, 255);
+    cursor: no-drop;
 }
 

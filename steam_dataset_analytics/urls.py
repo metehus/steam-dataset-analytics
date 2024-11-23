@@ -17,12 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app import views
-from app.views import get_select_values, index_view, serve_media_file
+from app.views import get_train_values, index_view, serve_media_file, train_view, predict_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('generate_charts/', views.generate_charts),
     path('media/<str:filename>', serve_media_file),
-    path('select_values', get_select_values),
+    path('train_values', get_train_values),
+    path('train', train_view),
+    path('predict', predict_view),
     path('', index_view),
 ]

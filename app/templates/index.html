@@ -24,13 +24,13 @@
   <div class="upload-container">
     <h1>Analise de dados</h1>
 
-    <button class="to-disable-when-no-data" onclick="handleFileUpload()">Treinar</button>
+    <button class="to-disable-when-no-data" id="train-btn" onclick="train()">Treinar</button>
     <h3 id="message-train"></h3>
 
-    <form>
+    <form id="predict-form">
       <label>
         Preço (em USD):
-        <input class="to-disable-when-no-data" type="number">
+        <input class="to-disable-when-no-data" type="number" name="price">
       </label>
       <label>
         Genero:
@@ -43,7 +43,8 @@
         </select>
       </label>
 
-      <button class="to-disable-when-no-data">Preditar</button>
+      <button class="to-disable-when-no-data" id="predict-btn">Preditar</button>
+      <h3 id="message-predict"></h3>
     </form>
   </div>
 
@@ -58,7 +59,10 @@
   <script>
     const messageInputElement = document.querySelector('#message-input')
     const messageTrainElement = document.querySelector('#message-train')
+    const messagePredictElement = document.querySelector('#message-predict')
     const chartsContainer = document.querySelector('.charts-container')
+    const trainBtn = document.querySelector('#train-btn')
+    const predictBtn = document.querySelector('#predict-btn')
     const toDisableWhenNoDataElements = document.querySelectorAll('.to-disable-when-no-data')
 
     const showCharts = () => chartsContainer.style.display = 'inherit'
@@ -98,7 +102,7 @@
 
     async function loadSelectValues() {
       try {
-        const { genres, details } = await fetch('/select_values').then(r => r.json())
+        const { genres, details, trained } = await fetch('/train_values').then(r => r.json()) 
 
         toDisableWhenNoDataElements.forEach(el => { el.disabled = false })
         messageTrainElement.innerText = ''
@@ -108,7 +112,10 @@
 
         populateSelectOptions(genresElement, genres)
         populateSelectOptions(detailsElement, details)
+
+        predictBtn.disabled = !trained
       } catch (error) {
+        console.error(error)
         messageTrainElement.innerText = 'Envie um arquivo para treinar'
         toDisableWhenNoDataElements.forEach(el => { el.disabled = true })
         return;
@@ -123,6 +130,44 @@
         element.add(optionElement);
       }
     }
+
+    async function train() {
+      try {
+        const response = await fetch('/train', {
+          method: 'POST',
+        }).then(r => r.json())
+
+        console.log(response)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    async function predict(event) {
+      event.preventDefault()
+      messagePredictElement.innerText = ''
+      try {
+        const price = parseFloat(document.querySelector('[name="price"]').value)
+        const genre = document.querySelector('[name="genre"]').value
+        const detail = document.querySelector('[name="detail"]').value
+
+        const response = await fetch('/predict', {
+          method: 'POST',
+          body: JSON.stringify({
+            price, genre, detail
+          })
+        }).then(r => r.json())
+
+        console.log(response)
+
+        messagePredictElement.innerText = `Previsão de ${response.percent.toFixed(2)}% de reviews positivas`
+      } catch (error) {
+        console.error(error)
+        messagePredictElement.innerText = `Ocorreu um erro: ${error}`
+      }
+    }
+
+    document.querySelector('#predict-form').addEventListener('submit', predict)
 
   </script>
 </body>
