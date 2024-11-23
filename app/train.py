@@ -212,6 +212,15 @@ def train(df):
 
   print(y_pred)
 
+  return {
+     'metrics': {
+          'meanSquaredError': mse,
+          'rootMeanSquaredError': rmse,
+          'meanAbsoluteError': mae,
+          'r2Score': r2,
+     }
+  }
+
 def get_data_path(filename):
    return os.path.join(data_dir, filename)
 

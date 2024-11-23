@@ -101,11 +101,9 @@ def train_view(request):
   if df is None:
     raise 'No df selected'
   
-  train(df)
+  train_metrics = train(df)
 
-  return JsonResponse({
-     'a': 2
-  })
+  return JsonResponse(train_metrics)
 
 @csrf_exempt
 def predict_view(request):
