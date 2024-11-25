@@ -57,9 +57,6 @@ img {
     padding: 1em;
 }
 
-#message-train {
-    color: darkred;
-}
 
 button {
     width: 50%;
@@ -70,12 +67,28 @@ button {
     background-color: #007bff;
     color: white;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
 }
 
 button:disabled {
     
-    background-color: #bddcff;
+    background-color: #6bb1ff;
     color: rgb(255, 255, 255);
     cursor: no-drop;
+}
+
+.loading-indicator {
+    width: 20px;
+    height: 20px;
+    padding: 0;
+    margin: 0;
+    display: none;
+}
+
+button.is-loading .loading-indicator {
+    display: inherit;
 }
 

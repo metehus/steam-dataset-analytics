@@ -192,7 +192,7 @@ def train(df):
 
   # Print example predictions
   print('\nExample predictions (in percentages):')
-  sample_indices = np.random.choice(len(y_test), 5, replace=False)
+  sample_indices = np.random.choice(len(y_test), min(len(y_test), 5), replace=False)
   for idx in sample_indices:
       print(f'Actual: {y_test.iloc[idx]:.1f}%, Predicted: {y_pred[idx]:.1f}%')
 

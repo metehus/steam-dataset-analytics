@@ -17,15 +17,21 @@
     <h1>Upload do Arquivo CSV</h1>
 
     <input type="file" id="fileInput" accept=".csv" required>
-    <button onclick="handleFileUpload()">Enviar</button>
+    <button onclick="handleFileUpload()" id="upload-btn">
+      <img class="loading-indicator" src="../static/loading.svg" />
+      Enviar
+    </button>
     <h3 id="message-input"></h3>
   </div>
 
   <div class="upload-container">
     <h1>Analise de dados</h1>
 
-    <button class="to-disable-when-no-data" id="train-btn" onclick="train()">Treinar</button>
-    <h3 id="message-train"></h3>
+    <button class="to-disable-when-no-data" id="train-btn" onclick="train()">
+      <img class="loading-indicator" src="../static/loading.svg" />
+      Treinar
+    </button>
+    <h4 id="message-train"></h4>
 
     <form id="predict-form">
       <label>
@@ -43,7 +49,9 @@
         </select>
       </label>
 
-      <button class="to-disable-when-no-data" id="predict-btn">Preditar</button>
+      <button class="to-disable-when-no-data" id="predict-btn"><img class="loading-indicator" src="../static/loading.svg" />
+        Preditar
+      </button>
       <h3 id="message-predict"></h3>
     </form>
   </div>
@@ -60,49 +68,55 @@
     const messageInputElement = document.querySelector('#message-input')
     const messageTrainElement = document.querySelector('#message-train')
     const messagePredictElement = document.querySelector('#message-predict')
+
     const chartsContainer = document.querySelector('.charts-container')
+
+    const uploadBtn = document.querySelector('#upload-btn')
     const trainBtn = document.querySelector('#train-btn')
     const predictBtn = document.querySelector('#predict-btn')
+
     const toDisableWhenNoDataElements = document.querySelectorAll('.to-disable-when-no-data')
 
     const showCharts = () => chartsContainer.style.display = 'inherit'
     const hideCharts = () => chartsContainer.style.display = 'none'
 
     async function handleFileUpload() {
-      hideCharts()
-      messageInputElement.innerText = 'Carregando...'
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
+
+      if (!file) {
+        return alert('Selecione um arquivo .csv valido!');
+      }
+      hideCharts()
+      messageInputElement.innerText = ''
+      setLoading(uploadBtn, true)
 
       const formData = new FormData();
       formData.append('file', file);
 
-      if (file) {
-        try {
+      try {
+        const images = await fetch('/generate_charts/', {
+          method: 'POST',
+          body: formData,
+        }).then(r => r.json())
 
-          const images = await fetch('/generate_charts/', {
-            method: 'POST',
-            body: formData,
-          }).then(r => r.json())
+        showCharts()
+        messageInputElement.innerText = ''
 
-          showCharts()
-          messageInputElement.innerText = ''
+        await loadSelectValues()
 
-          await loadSelectValues()
-
-          console.log(images)
-        } catch (error) {
-          console.error(error)
-          messageInputElement.innerText = `Ocorreu um erro! ${error}`
-        }
-      } else {
-        alert('Selecione um arquivo .csv valido!');
+        console.log(images)
+      } catch (error) {
+        console.error(error)
+        messageInputElement.innerText = `Ocorreu um erro! ${error}`
+      } finally {
+        setLoading(uploadBtn, false)
       }
     }
 
     async function loadSelectValues() {
       try {
-        const { genres, details, trained } = await fetch('/train_values').then(r => r.json()) 
+        const { genres, details, trained } = await fetch('/train_values').then(r => r.json())
 
         toDisableWhenNoDataElements.forEach(el => { el.disabled = false })
         messageTrainElement.innerText = ''
@@ -133,14 +147,23 @@
 
     async function train() {
       try {
-        const response = await fetch('/train', {
+        setLoading(trainBtn, true)
+        const { metrics } = await fetch('/train', {
           method: 'POST',
         }).then(r => r.json())
 
         // TODO: mostrar as metricas
-        console.log(response)
+        console.log(metrics)
+
+        messageTrainElement.innerText = `Treino realizado!\n`
+          + `Mean absolute error: ${metrics.meanAbsoluteError.toFixed(2)}\n`
+          + `Mean squared error: ${metrics.meanSquaredError.toFixed(2)}\n`
+          + `R² score: ${metrics.r2Score.toFixed(2)}\n`
+          + `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(2)}`
       } catch (error) {
         console.error(error)
+      } finally {
+        setLoading(trainBtn, false)
       }
     }
 
@@ -148,6 +171,7 @@
       event.preventDefault()
       messagePredictElement.innerText = ''
       try {
+        setLoading(predictBtn, true)
         const price = parseFloat(document.querySelector('[name="price"]').value)
         const genre = document.querySelector('[name="genre"]').value
         const detail = document.querySelector('[name="detail"]').value
@@ -165,10 +189,22 @@
       } catch (error) {
         console.error(error)
         messagePredictElement.innerText = `Ocorreu um erro: ${error}`
+      } finally {
+        setLoading(predictBtn, false)
       }
     }
 
     document.querySelector('#predict-form').addEventListener('submit', predict)
+
+    function setLoading(/** @type {Element} **/buttonElement, isLoading) {
+      buttonElement.disabled = isLoading
+      if (isLoading) {
+        buttonElement.classList.add('is-loading')
+      } else {
+        buttonElement.classList.remove('is-loading')
+      }
+
+    }
 
   </script>
 </body>
