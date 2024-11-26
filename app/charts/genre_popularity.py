@@ -1,14 +1,9 @@
 import matplotlib.pyplot as plt
 import re
 
-def extract_review_count(review_text):
-    match = re.search(r'\(([\d,]+)\)', str(review_text))
-    if match:
-        return int(match.group(1).replace(',', ''))
-    return 0
 
 def create_genre_popularity_chart(df):
-  df['review_count'] = df['all_reviews'].apply(extract_review_count)
+  df['review_count'] = df['num_reviews']
     
   genre_counts = (
     df['genre']

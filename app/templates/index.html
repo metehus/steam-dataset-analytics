@@ -57,11 +57,11 @@
   </div>
 
   <div class="charts-container" style="display: visible;">
-    <img src="../media/genre_popularity.jpg" alt="Gráfico de popularidade dos gêneros de jogos da Steam">
-    <img src="../media/developer_rating_chart.jpg" alt="">
-    <img src="../media/games_reviews.jpg" alt="">
-    <img src="../media/genre_distribution_developer.jpg" alt="">
-    <img src="../media/games_developer.jpg" alt="">
+    <img src="../media/genre_popularity.jpg">
+    <img src="../media/developer_rating_chart.jpg">
+    <img src="../media/games_reviews.jpg">
+    <img src="../media/genre_distribution_developer.jpg">
+    <img src="../media/games_developer.jpg">
   </div>
 
   <script>
@@ -77,7 +77,13 @@
 
     const toDisableWhenNoDataElements = document.querySelectorAll('.to-disable-when-no-data')
 
-    const showCharts = () => chartsContainer.style.display = 'inherit'
+    const showCharts = () => {
+      const images = chartsContainer.querySelectorAll('img')
+      for (const img of images) {
+        img.src += '?nocache=' + Date.now()
+      }
+      chartsContainer.style.display = 'inherit'
+    }
     const hideCharts = () => chartsContainer.style.display = 'none'
 
     async function handleFileUpload() {
@@ -147,6 +153,7 @@
 
     async function train() {
       try {
+        messageTrainElement.innerText = ``
         setLoading(trainBtn, true)
         const { metrics } = await fetch('/train', {
           method: 'POST',
@@ -161,6 +168,7 @@
           + `R² score: ${metrics.r2Score.toFixed(2)}\n`
           + `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(2)}`
       } catch (error) {
+        messageTrainElement.innerText = `Erro: ${error}`
         console.error(error)
       } finally {
         setLoading(trainBtn, false)

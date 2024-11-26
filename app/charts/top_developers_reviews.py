@@ -1,14 +1,8 @@
 import matplotlib.pyplot as plt
 import re
 
-def extract_review_count(review_text):
-    match = re.search(r'\(([\d,]+)\)', str(review_text))
-    if match:
-        return int(match.group(1).replace(',', ''))
-    return 0
-
 def create_developer_rating_chart(df):
-    df['review_score'] = df['all_reviews'].apply(extract_review_count)
+    df['review_score'] = df['num_reviews']
 
     developer_ratings = (
     df.groupby('developer')['review_count']

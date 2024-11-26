@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib
 import matplotlib.pyplot as plt
 import os
+from app.format_dataset import format_dataset
 from app.charts.genre_popularity import create_genre_popularity_chart
 from app.charts.top_developers_reviews import create_developer_rating_chart
 from app.charts.games_reviews import create_games_reviews
@@ -31,38 +32,46 @@ def index_view(request):
 
 @csrf_exempt
 def generate_charts(request):
-    os.makedirs(data_dir, exist_ok=True)
-    os.makedirs(media_dir, exist_ok=True)
-    uploaded_file = request.FILES['file']
     try:
+      os.makedirs(data_dir, exist_ok=True)
+      os.makedirs(media_dir, exist_ok=True)
+      uploaded_file = request.FILES['file']
+
       df = pd.read_csv(uploaded_file)
+      df = format_dataset(df)
       df.to_pickle(df_file_path)
+
+      # cria os plots e salva eles nesse objeto
+      charts = {
+          'genre_popularity': create_genre_popularity_chart(df),
+          'developer_rating_chart' : create_developer_rating_chart(df),
+          'genre_distribution_developer' : create_genre_distribution_developer(df),
+          'games_developer' : create_games_developer(df),
+          'games_reviews' : create_games_reviews(df)
+      }
+
+      response = {}
+      
+      # exporta cada plot na pasta
+      for name, figure in charts.items():
+        filename = f'{name}.jpg'
+        output_file = os.path.join(media_dir, filename)
+        figure.savefig(output_file, format='jpg', dpi=300, bbox_inches='tight')
+        plt.close(figure)
+
+        response[name] = filename
+
+
+      return JsonResponse(response)
     except Exception as e:
-      return f"Erro ao processar o arquivo: {e}", 500
-    
-    charts = {
-        'genre_popularity': create_genre_popularity_chart(df),
-        'developer_rating_chart' : create_developer_rating_chart(df),
-        'genre_distribution_developer' : create_genre_distribution_developer(df),
-        'games_developer' : create_games_developer(df),
-        'games_reviews' : create_games_reviews(df)
-    }
-
-    response = {}
-    
-    for name, figure in charts.items():
-      filename = f'{name}.jpg'
-      output_file = os.path.join(media_dir, filename)
-      figure.savefig(output_file, format='jpg', dpi=300, bbox_inches='tight')
-      plt.close(figure)
-
-      response[name] = filename
-
-
-    return JsonResponse(response)
+      print(e)
+      return JsonResponse({
+        'erro': str(e)
+      }, status=500)
 
 @csrf_exempt
 def get_train_values(request):
+  # endpoint que retorna se ja foi treinado, e valores disponiveis para predição
   df = pd.read_pickle(df_file_path)
   
   if df is None:
@@ -96,6 +105,7 @@ def get_train_values(request):
     
 @csrf_exempt
 def train_view(request):
+  # endpoint de treino
   df = pd.read_pickle(df_file_path)
   
   if df is None:
@@ -107,25 +117,27 @@ def train_view(request):
 
 @csrf_exempt
 def predict_view(request):
+  # endpoint de predição
   if request.method != 'POST':
-   return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+    return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
   try:
-      data = json.loads(request.body)
-      
-      price = data.get('price', 0)
-      detail = data.get('detail', '')
-      genre = data.get('genre', '')
+    data = json.loads(request.body)
+    
+    price = data.get('price', 0)
+    detail = data.get('detail', '')
+    genre = data.get('genre', '')
 
-      predicted_percent = predict_positive_review(price, detail, genre)
+    predicted_percent = predict_positive_review(price, detail, genre)
 
-      return JsonResponse({'percent': predicted_percent})
+    return JsonResponse({'percent': predicted_percent})
 
   except Exception as e:
-      return JsonResponse({'error': str(e)}, status=400)
+    return JsonResponse({'error': str(e)}, status=400)
 
    
 
 def serve_media_file(request, filename):
+    # endpoint para servir imagens dos graficos
     file_path = os.path.join(media_dir, filename)
 
     if not os.path.exists(file_path):
