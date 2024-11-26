@@ -1,220 +1,286 @@
 <!-- dashboard/templates/dashboard/index.html -->
 <!DOCTYPE html>
 <html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/index.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+      rel="stylesheet"
+    />
+    <title>Dashboard de Jogos da Steam</title>
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="../static/index.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-  <title>Dashboard de Jogos da Steam</title>
-</head>
+  <body onload="loadSelectValues()">
+    <div class="upload-container">
+      <h1>Upload do Arquivo CSV</h1>
 
-<body onload="loadSelectValues()">
-  <div class="upload-container">
-    <h1>Upload do Arquivo CSV</h1>
-
-    <input type="file" id="fileInput" accept=".csv" required>
-    <button onclick="handleFileUpload()" id="upload-btn">
-      <img class="loading-indicator" src="../static/loading.svg" />
-      Enviar
-    </button>
-    <h3 id="message-input"></h3>
-  </div>
-
-  <div class="upload-container">
-    <h1>Analise de dados</h1>
-
-    <button class="to-disable-when-no-data" id="train-btn" onclick="train()">
-      <img class="loading-indicator" src="../static/loading.svg" />
-      Treinar
-    </button>
-    <h4 id="message-train"></h4>
-
-    <form id="predict-form">
-      <label>
-        Preço (em USD):
-        <input class="to-disable-when-no-data" type="number" name="price">
-      </label>
-      <label>
-        Genero:
-        <select class="to-disable-when-no-data" name="genre" id="genre">
-        </select>
-      </label>
-      <label>
-        Detalhe:
-        <select class="to-disable-when-no-data" name="detail" id="detail">
-        </select>
-      </label>
-
-      <button class="to-disable-when-no-data" id="predict-btn"><img class="loading-indicator" src="../static/loading.svg" />
-        Preditar
+      <input type="file" id="fileInput" accept=".csv" required />
+      <button onclick="handleFileUpload()" id="upload-btn">
+        <img class="loading-indicator" src="../static/loading.svg" />
+        Enviar
       </button>
-      <h3 id="message-predict"></h3>
-    </form>
-  </div>
+      <h3 id="message-input"></h3>
+    </div>
 
-  <div class="charts-container" style="display: visible;">
-    <img src="../media/genre_popularity.jpg">
-    <img src="../media/developer_rating_chart.jpg">
-    <img src="../media/games_reviews.jpg">
-    <img src="../media/genre_distribution_developer.jpg">
-    <img src="../media/games_developer.jpg">
-  </div>
+    <div class="upload-container">
+      <h1>Análise de dados</h1>
 
-  <script>
-    const messageInputElement = document.querySelector('#message-input')
-    const messageTrainElement = document.querySelector('#message-train')
-    const messagePredictElement = document.querySelector('#message-predict')
+      <button class="to-disable-when-no-data" id="train-btn" onclick="train()">
+        <img class="loading-indicator" src="../static/loading.svg" />
+        Treinar
+      </button>
+      <h4 id="message-train"></h4>
 
-    const chartsContainer = document.querySelector('.charts-container')
+      <form id="predict-form">
+        <label>
+          Preço (em USD):
+          <input class="to-disable-when-no-data" type="number" name="price" />
+        </label>
+        <label>
+          Gênero:
+          <select
+            class="to-disable-when-no-data"
+            name="genre"
+            id="genre"
+          ></select>
+        </label>
+        <label>
+          Detalhe:
+          <select
+            class="to-disable-when-no-data"
+            name="detail"
+            id="detail"
+          ></select>
+        </label>
 
-    const uploadBtn = document.querySelector('#upload-btn')
-    const trainBtn = document.querySelector('#train-btn')
-    const predictBtn = document.querySelector('#predict-btn')
+        <button class="to-disable-when-no-data" id="predict-btn">
+          <img class="loading-indicator" src="../static/loading.svg" />
+          Preditar
+        </button>
+        <h3 id="message-predict"></h3>
+      </form>
+    </div>
 
-    const toDisableWhenNoDataElements = document.querySelectorAll('.to-disable-when-no-data')
+    <div class="modal" onclick="toggleModal()">
+      <img class="modal-content" onclick="event.stopPropagation()" />
+    </div>
 
-    const showCharts = () => {
-      const images = chartsContainer.querySelectorAll('img')
-      for (const img of images) {
-        img.src += '?nocache=' + Date.now()
-      }
-      chartsContainer.style.display = 'inherit'
-    }
-    const hideCharts = () => chartsContainer.style.display = 'none'
+    <div class="charts-container" style="display: visible">
+      <img
+        class="img-item"
+        src="../media/genre_popularity.jpg"
+        <img
+        class="img-item"
+        src="../media/genre_popularity.jpg"
+        onclick="toggleModal('../media/genre_popularity.jpg')"
+      />
+      <img
+        class="img-item"
+        src="../media/developer_rating_chart.jpg"
+        onclick="toggleModal('../media/developer_rating_chart.jpg')"
+      />
+      <img
+        class="img-item"
+        src="../media/games_reviews.jpg"
+        onclick="toggleModal('../media/games_reviews.jpg')"
+      />
+      <img
+        class="img-item"
+        src="../media/genre_distribution_developer.jpg"
+        onclick="toggleModal('../media/genre_distribution_developer.jpg')"
+      />
+      <img
+        class="img-item"
+        src="../media/games_developer.jpg"
+        onclick="toggleModal('../media/games_developer.jpg')"
+      />
+    </div>
 
-    async function handleFileUpload() {
-      const fileInput = document.getElementById('fileInput');
-      const file = fileInput.files[0];
+    <script>
+      const messageInputElement = document.querySelector("#message-input");
+      const messageTrainElement = document.querySelector("#message-train");
+      const messagePredictElement = document.querySelector("#message-predict");
 
-      if (!file) {
-        return alert('Selecione um arquivo .csv valido!');
-      }
-      hideCharts()
-      messageInputElement.innerText = ''
-      setLoading(uploadBtn, true)
+      const chartsContainer = document.querySelector(".charts-container");
 
-      const formData = new FormData();
-      formData.append('file', file);
+      const uploadBtn = document.querySelector("#upload-btn");
+      const trainBtn = document.querySelector("#train-btn");
+      const predictBtn = document.querySelector("#predict-btn");
 
-      try {
-        const images = await fetch('/generate_charts/', {
-          method: 'POST',
-          body: formData,
-        }).then(r => r.json())
+      const toDisableWhenNoDataElements = document.querySelectorAll(
+        ".to-disable-when-no-data"
+      );
 
-        showCharts()
-        messageInputElement.innerText = ''
+      const showCharts = () => {
+        const images = chartsContainer.querySelectorAll("img");
+        for (const img of images) {
+          img.src += "?nocache=" + Date.now();
+        }
+        chartsContainer.style.display = "inherit";
+      };
+      const hideCharts = () => (chartsContainer.style.display = "none");
 
-        await loadSelectValues()
+      async function handleFileUpload() {
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
 
-        console.log(images)
-      } catch (error) {
-        console.error(error)
-        messageInputElement.innerText = `Ocorreu um erro! ${error}`
-      } finally {
-        setLoading(uploadBtn, false)
-      }
-    }
+        if (!file) {
+          return alert("Selecione um arquivo .csv valido!");
+        }
+        hideCharts();
+        messageInputElement.innerText = "";
+        setLoading(uploadBtn, true);
 
-    async function loadSelectValues() {
-      try {
-        const { genres, details, trained } = await fetch('/train_values').then(r => r.json())
+        const formData = new FormData();
+        formData.append("file", file);
 
-        toDisableWhenNoDataElements.forEach(el => { el.disabled = false })
-        messageTrainElement.innerText = ''
+        try {
+          const images = await fetch("/generate_charts/", {
+            method: "POST",
+            body: formData,
+          }).then((r) => r.json());
 
-        const genresElement = document.querySelector('#genre')
-        const detailsElement = document.querySelector('#detail')
+          showCharts();
+          messageInputElement.innerText = "";
 
-        populateSelectOptions(genresElement, genres)
-        populateSelectOptions(detailsElement, details)
+          await loadSelectValues();
 
-        predictBtn.disabled = !trained
-      } catch (error) {
-        console.error(error)
-        messageTrainElement.innerText = 'Envie um arquivo para treinar'
-        toDisableWhenNoDataElements.forEach(el => { el.disabled = true })
-        return;
-      }
-    }
-
-    function populateSelectOptions(element, values) {
-      for (option of values) {
-        optionElement = document.createElement('option');
-        optionElement.value = option
-        optionElement.innerText = option
-        element.add(optionElement);
-      }
-    }
-
-    async function train() {
-      try {
-        messageTrainElement.innerText = ``
-        setLoading(trainBtn, true)
-        const { metrics } = await fetch('/train', {
-          method: 'POST',
-        }).then(r => r.json())
-
-        // TODO: mostrar as metricas
-        console.log(metrics)
-
-        messageTrainElement.innerText = `Treino realizado!\n`
-          + `Mean absolute error: ${metrics.meanAbsoluteError.toFixed(2)}\n`
-          + `Mean squared error: ${metrics.meanSquaredError.toFixed(2)}\n`
-          + `R² score: ${metrics.r2Score.toFixed(2)}\n`
-          + `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(2)}`
-      } catch (error) {
-        messageTrainElement.innerText = `Erro: ${error}`
-        console.error(error)
-      } finally {
-        setLoading(trainBtn, false)
-      }
-    }
-
-    async function predict(event) {
-      event.preventDefault()
-      messagePredictElement.innerText = ''
-      try {
-        setLoading(predictBtn, true)
-        const price = parseFloat(document.querySelector('[name="price"]').value)
-        const genre = document.querySelector('[name="genre"]').value
-        const detail = document.querySelector('[name="detail"]').value
-
-        const response = await fetch('/predict', {
-          method: 'POST',
-          body: JSON.stringify({
-            price, genre, detail
-          })
-        }).then(r => r.json())
-
-        console.log(response)
-
-        messagePredictElement.innerText = `Previsão de ${response.percent.toFixed(2)}% de reviews positivas`
-      } catch (error) {
-        console.error(error)
-        messagePredictElement.innerText = `Ocorreu um erro: ${error}`
-      } finally {
-        setLoading(predictBtn, false)
-      }
-    }
-
-    document.querySelector('#predict-form').addEventListener('submit', predict)
-
-    function setLoading(/** @type {Element} **/buttonElement, isLoading) {
-      buttonElement.disabled = isLoading
-      if (isLoading) {
-        buttonElement.classList.add('is-loading')
-      } else {
-        buttonElement.classList.remove('is-loading')
+          console.log(images);
+        } catch (error) {
+          console.error(error);
+          messageInputElement.innerText = `Ocorreu um erro! ${error}`;
+        } finally {
+          setLoading(uploadBtn, false);
+        }
       }
 
-    }
+      async function loadSelectValues() {
+        try {
+          const { genres, details, trained } = await fetch(
+            "/train_values"
+          ).then((r) => r.json());
 
-  </script>
-</body>
+          toDisableWhenNoDataElements.forEach((el) => {
+            el.disabled = false;
+          });
+          messageTrainElement.innerText = "";
 
+          const genresElement = document.querySelector("#genre");
+          const detailsElement = document.querySelector("#detail");
+
+          populateSelectOptions(genresElement, genres);
+          populateSelectOptions(detailsElement, details);
+
+          predictBtn.disabled = !trained;
+        } catch (error) {
+          console.error(error);
+          messageTrainElement.innerText = "Envie um arquivo para treinar";
+          toDisableWhenNoDataElements.forEach((el) => {
+            el.disabled = true;
+          });
+          return;
+        }
+      }
+
+      function populateSelectOptions(element, values) {
+        for (option of values) {
+          optionElement = document.createElement("option");
+          optionElement.value = option;
+          optionElement.innerText = option;
+          element.add(optionElement);
+        }
+      }
+
+      async function train() {
+        try {
+          messageTrainElement.innerText = ``;
+          setLoading(trainBtn, true);
+          const { metrics } = await fetch("/train", {
+            method: "POST",
+          }).then((r) => r.json());
+
+          // TODO: mostrar as metricas
+          console.log(metrics);
+
+          messageTrainElement.innerText =
+            `Treino realizado!\n` +
+            `Mean absolute error: ${metrics.meanAbsoluteError.toFixed(2)}\n` +
+            `Mean squared error: ${metrics.meanSquaredError.toFixed(2)}\n` +
+            `R² score: ${metrics.r2Score.toFixed(2)}\n` +
+            `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(
+              2
+            )}`;
+        } catch (error) {
+          messageTrainElement.innerText = `Erro: ${error}`;
+          console.error(error);
+        } finally {
+          setLoading(trainBtn, false);
+        }
+      }
+
+      async function predict(event) {
+        event.preventDefault();
+        messagePredictElement.innerText = "";
+        try {
+          setLoading(predictBtn, true);
+          const price = parseFloat(
+            document.querySelector('[name="price"]').value
+          );
+          const genre = document.querySelector('[name="genre"]').value;
+          const detail = document.querySelector('[name="detail"]').value;
+
+          const response = await fetch("/predict", {
+            method: "POST",
+            body: JSON.stringify({
+              price,
+              genre,
+              detail,
+            }),
+          }).then((r) => r.json());
+
+          console.log(response);
+
+          messagePredictElement.innerText = `Previsão de ${response.percent.toFixed(
+            2
+          )}% de reviews positivas`;
+        } catch (error) {
+          console.error(error);
+          messagePredictElement.innerText = `Ocorreu um erro: ${error}`;
+        } finally {
+          setLoading(predictBtn, false);
+        }
+      }
+
+      document
+        .querySelector("#predict-form")
+        .addEventListener("submit", predict);
+
+      function setLoading(/** @type {Element} **/ buttonElement, isLoading) {
+        buttonElement.disabled = isLoading;
+        if (isLoading) {
+          buttonElement.classList.add("is-loading");
+        } else {
+          buttonElement.classList.remove("is-loading");
+        }
+      }
+
+      function toggleModal(src) {
+        event.stopPropagation();
+        const modal = document.querySelector(".modal");
+        const modalImg = document.querySelector(".modal-content");
+        modalImg.src = src;
+        if (modal.style.display === "none" || modal.style.display === "") {
+          modal.style.display = "flex";
+          modal.style.opacity = "1";
+        } else {
+          modal.style.display = "none";
+          modal.style.opacity = "0";
+        }
+      }
+    </script>
+  </body>
 </html>
