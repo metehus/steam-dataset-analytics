@@ -29,6 +29,10 @@ from app.charts.genre_distribution_developer_top5 import create_genre_distributi
 from app.charts.genre_distribution_developer_top10 import create_genre_distribution_developer_top10
 from app.charts.genre_distribution_developer_top20 import create_genre_distribution_developer_top20
 
+from app.charts.most_achievements_top5 import create_most_achievements_chart_top5
+from app.charts.most_achievements_top10 import create_most_achievements_chart_top10
+from app.charts.most_achievements_top20 import create_most_achievements_chart_top20
+
 from app.train import is_trained, predict_positive_review, train
 
 matplotlib.use('Agg')
@@ -73,7 +77,10 @@ def generate_charts(request):
           'games_developer_top20' : create_games_developer_top20(df),
           'games_reviews_top5' : create_games_reviews_top5(df),
           'games_reviews_top10' : create_games_reviews_top10(df),
-          'games_reviews_top20' : create_games_reviews_top20(df)
+          'games_reviews_top20' : create_games_reviews_top20(df),
+          'games_achievements_top5': create_most_achievements_chart_top5(df),
+          'games_achievements_top10': create_most_achievements_chart_top10(df),
+          'games_achievements_top20': create_most_achievements_chart_top20(df)
       }
 
       response = {}
