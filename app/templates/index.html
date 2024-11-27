@@ -69,34 +69,44 @@
       <img class="modal-content" onclick="event.stopPropagation()" />
     </div>
 
-    <div class="charts-container" style="display: visible">
+      <div class="selectTop">
+        <select id="top-select">
+          <option value="5">Top 5</option>
+          <option value="10">Top 10</option>
+          <option value="20">Top 20</option>
+        </select>
+        <button onclick="updateCharts()">Atualizar</button>
+      </div>
+
+      <div class="charts-container" style="display: visible">
+
       <img
         class="img-item"
-        src="../media/genre_popularity.jpg"
+        src="../media/genre_popularity_top5.jpg"
         <img
         class="img-item"
-        src="../media/genre_popularity.jpg"
-        onclick="toggleModal('../media/genre_popularity.jpg')"
+        src="../media/genre_popularity_top5.jpg"
+        onclick="toggleModal('../media/genre_popularity_top5.jpg')"
       />
       <img
         class="img-item"
-        src="../media/developer_rating_chart.jpg"
-        onclick="toggleModal('../media/developer_rating_chart.jpg')"
+        src="../media/developer_rating_chart_top5.jpg"
+        onclick="toggleModal('../media/developer_rating_chart_top5.jpg')"
       />
       <img
         class="img-item"
-        src="../media/games_reviews.jpg"
-        onclick="toggleModal('../media/games_reviews.jpg')"
+        src="../media/games_reviews_top5.jpg"
+        onclick="toggleModal('../media/games_reviews_top5.jpg')"
       />
       <img
         class="img-item"
-        src="../media/genre_distribution_developer.jpg"
-        onclick="toggleModal('../media/genre_distribution_developer.jpg')"
+        src="../media/genre_distribution_developer_top5.jpg"
+        onclick="toggleModal('../media/genre_distribution_developer_top5.jpg')"
       />
       <img
         class="img-item"
-        src="../media/games_developer.jpg"
-        onclick="toggleModal('../media/games_developer.jpg')"
+        src="../media/games_developer_top5.jpg"
+        onclick="toggleModal('../media/games_developer_top5.jpg')"
       />
     </div>
 
@@ -156,6 +166,17 @@
         } finally {
           setLoading(uploadBtn, false);
         }
+      }
+
+      function updateCharts() {
+        const topValue = document.querySelector("#top-select").value;
+        const chartImages = document.querySelectorAll(".charts-container .img-item");
+
+        chartImages.forEach((img) => {
+        // Substituir o número atual do Top na URL da imagem
+        img.src = img.src.replace(/top\d+/i, `top${topValue}`) + `?nocache=${Date.now()}`;
+        img.onclick = () => toggleModal(img.src);
+        });
       }
 
       async function loadSelectValues() {

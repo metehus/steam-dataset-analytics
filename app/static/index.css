@@ -38,6 +38,24 @@ h1 {
   box-sizing: border-box;
 }
 
+.selectTop {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  width: 30%;
+  min-width: 300px;
+  margin: auto;
+  padding: 1em;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+select {
+  border-radius: 5px;
+  width: 100px;
+  height: 30px;
+}
+
 .charts-container {
   width: 100%;
   margin: auto;

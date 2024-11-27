@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-def create_genre_distribution_developer(df):
+def create_genre_distribution_developer_top20(df):
     # Processando dados de gênero e desenvolvedor
     genre_data = (
         df[['developer', 'genre']]
@@ -11,7 +11,7 @@ def create_genre_distribution_developer(df):
     
     # Contando o número de jogos por desenvolvedor
     developer_game_counts = genre_data.groupby('developer').size()
-    top_developers = developer_game_counts.nlargest(10).index  # Top 10 desenvolvedores com mais jogos
+    top_developers = developer_game_counts.nlargest(20).index  # Top 10 desenvolvedores com mais jogos
 
     # Contando a distribuição de gêneros
     genre_counts = genre_data.groupby(['developer', 'genre']).size().unstack(fill_value=0)
@@ -25,7 +25,7 @@ def create_genre_distribution_developer(df):
     genre_counts_normalized.plot(kind='bar', stacked=True, colormap='tab20', ax=ax)
 
     # Configurações do gráfico
-    ax.set_title('Distribuição de Gêneros por Desenvolvedor (Top 10)', fontsize=16)
+    ax.set_title('Distribuição de Gêneros por Desenvolvedor (Top 20)', fontsize=16)
     ax.set_xlabel('Desenvolvedores', fontsize=12)
     ax.set_ylabel('Proporção de Gêneros', fontsize=12)
     ax.legend(title='Gêneros', bbox_to_anchor=(1.05, 1), loc='upper left')

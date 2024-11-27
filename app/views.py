@@ -8,11 +8,27 @@ import matplotlib
 import matplotlib.pyplot as plt
 import os
 from app.format_dataset import format_dataset
-from app.charts.genre_popularity import create_genre_popularity_chart
-from app.charts.top_developers_reviews import create_developer_rating_chart
-from app.charts.games_reviews import create_games_reviews
-from app.charts.games_developer import create_games_developer
-from app.charts.genre_distribution_developer import create_genre_distribution_developer
+
+from app.charts.genre_popularity_top5 import create_genre_popularity_chart_top5
+from app.charts.genre_popularity_top10 import create_genre_popularity_chart_top10
+from app.charts.genre_popularity_top20 import create_genre_popularity_chart_top20
+
+from app.charts.top_developers_reviews_top5 import create_developer_rating_chart_top5
+from app.charts.top_developers_reviews_top10 import create_developer_rating_chart_top10
+from app.charts.top_developers_reviews_top20 import create_developer_rating_chart_top20
+
+from app.charts.games_reviews_top5 import create_games_reviews_top5
+from app.charts.games_reviews_top10 import create_games_reviews_top10
+from app.charts.games_reviews_top20 import create_games_reviews_top20
+
+from app.charts.games_developer_top5 import create_games_developer_top5
+from app.charts.games_developer_top10 import create_games_developer_top10
+from app.charts.games_developer_top20 import create_games_developer_top20
+
+from app.charts.genre_distribution_developer_top5 import create_genre_distribution_developer_top5
+from app.charts.genre_distribution_developer_top10 import create_genre_distribution_developer_top10
+from app.charts.genre_distribution_developer_top20 import create_genre_distribution_developer_top20
+
 from app.train import is_trained, predict_positive_review, train
 
 matplotlib.use('Agg')
@@ -43,11 +59,21 @@ def generate_charts(request):
 
       # cria os plots e salva eles nesse objeto
       charts = {
-          'genre_popularity': create_genre_popularity_chart(df),
-          'developer_rating_chart' : create_developer_rating_chart(df),
-          'genre_distribution_developer' : create_genre_distribution_developer(df),
-          'games_developer' : create_games_developer(df),
-          'games_reviews' : create_games_reviews(df)
+          'genre_popularity_top5': create_genre_popularity_chart_top5(df),
+          'genre_popularity_top10': create_genre_popularity_chart_top10(df),
+          'genre_popularity_top20': create_genre_popularity_chart_top20(df),
+          'developer_rating_chart_top5' : create_developer_rating_chart_top5(df),
+          'developer_rating_chart_top10' : create_developer_rating_chart_top10(df),
+          'developer_rating_chart_top20' : create_developer_rating_chart_top20(df),
+          'genre_distribution_developer_top5' : create_genre_distribution_developer_top5(df),
+          'genre_distribution_developer_top10' : create_genre_distribution_developer_top10(df),
+          'genre_distribution_developer_top20' : create_genre_distribution_developer_top20(df),
+          'games_developer_top5' : create_games_developer_top5(df),
+          'games_developer_top10' : create_games_developer_top10(df),
+          'games_developer_top20' : create_games_developer_top20(df),
+          'games_reviews_top5' : create_games_reviews_top5(df),
+          'games_reviews_top10' : create_games_reviews_top10(df),
+          'games_reviews_top20' : create_games_reviews_top20(df)
       }
 
       response = {}
