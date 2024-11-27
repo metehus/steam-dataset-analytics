@@ -72,7 +72,7 @@ def train(df):
   print(X.size)
   
 
-  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+  X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.25, random_state=42)
 
   model = xgb.XGBRegressor(
       colsample_bytree=0.8,
@@ -81,7 +81,7 @@ def train(df):
       n_estimators=150,
       subsample=0.8,
       random_state=42,
-      objective='reg:squarederror'
+      objective='reg:squarederror',
   )
 
   # model = GradientBoostingRegressor(
@@ -140,6 +140,7 @@ def get_data_path(filename):
    return os.path.join(data_dir, filename)
 
 def predict_positive_review(price, detail, genre):
+  # print(get_data_path('review_prediction_model.pkl'))
   # carrega o modelo dos arquivos
   model = joblib.load(get_data_path('review_prediction_model.pkl'))
   scaler = joblib.load(get_data_path('scaler.pkl'))

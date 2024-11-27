@@ -130,7 +130,7 @@
         for (const img of images) {
           img.src += "?nocache=" + Date.now();
         }
-        chartsContainer.style.display = "inherit";
+        chartsContainer.style.display = "grid";
       };
       const hideCharts = () => (chartsContainer.style.display = "none");
 
@@ -235,6 +235,7 @@
             `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(
               2
             )}`;
+            loadSelectValues().then()
         } catch (error) {
           messageTrainElement.innerText = `Erro: ${error}`;
           console.error(error);
