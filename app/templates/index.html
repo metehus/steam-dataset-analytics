@@ -231,6 +231,7 @@
 
           // TODO: mostrar as metricas
           console.log(metrics);
+          await loadSelectValues()
 
           messageTrainElement.innerText =
             `Treino realizado!\n` +
@@ -240,7 +241,6 @@
             `Root mean squared error: ${metrics.rootMeanSquaredError.toFixed(
               2
             )}`;
-            loadSelectValues().then()
         } catch (error) {
           messageTrainElement.innerText = `Erro: ${error}`;
           console.error(error);
